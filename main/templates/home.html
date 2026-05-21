@@ -1,0 +1,21 @@
+{% extends 'index.html' %}
+{% block content %}
+<div class='container'>
+    <h3>Brand New Products</h3>
+    <div class="products" style="display: flex; gap: 20px; flex-wrap: wrap;">
+        {% for pro in products  %}
+           <div class="card" style="width: 18rem;">
+            <img src="{{ pro.product_image.url }}" class="card-img-top" alt="{{ pro.name }}">
+            <div class="card-body">
+                <h5 class="card-title">{{ pro.name }}</h5>
+                <p class="card-text">{{ pro.description }}</p>
+                <p class="card-text">${{ pro.price|floatformat:2 }}</p>
+                <a href="#" class="btn btn-primary">Go somewhere</a>
+            </div>
+            </div>
+        {% endfor %}
+    </div>
+            
+    
+    </div
+{% endblock content %}
