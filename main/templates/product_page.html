@@ -1,60 +1,75 @@
 {% extends 'index.html' %}
 
-{% load static %}
-
 {% block content %}
 
-<div class="container my-5">
-  <div class="row g-5">
-    <!-- Product image -->
-    <div class="col-lg-6">
-      <img
-        src="{{ product.product_image.url }}"
-        class="img-fluid rounded shadow-sm"
-        alt="{{ product.name }}"
-      >
+<div class="detail-container">
+  <a href="{% url 'home' %}" class="back-btn">← Back to Store</a>
+
+  <div class="detail-layout">
+
+    <!-- PRODUCT IMAGE -->
+    <div>
+      <div class="detail-img-wrap">
+        <img class="detail-img" src="{{ product.product_image.url }}" alt="{{ product.name }}"/>
+      </div>
     </div>
 
-    <!-- Product info -->
-    <div class="col-lg-6">
-      <h1 class="mb-3">{{ product.name }}</h1>
-      <p class="lead">{{ product.description|default:"No description available." }}</p>
+    <!-- PRODUCT INFO -->
+    <div>
+      <div class="detail-cat">{{ product.category.name }}</div>
+      <div class="detail-name">{{ product.name }}</div>
 
-      <hr>
-
-      <div class="mb-4">
-        <h4 class="d-inline-block me-3">
-          ₹{{ product.price }}
-        </h4>
-        <!-- Optional: show old price if on sale -->
-        {% if product.old_price %}
-          <small class="text-muted text-decoration-line-through">
-            ₹{{ product.old_otions.price }}
-          </small>
-        {% endif %}
+      <div class="detail-price-box">
+        <div class="detail-price">₹{{ product.price|floatformat:0 }}</div>
+        <div class="detail-prime">✔ FREE Delivery — Get it by Tomorrow</div>
       </div>
 
-      <div class="d-flex gap-2 mb-4 items-center">
-        
-        {% if is_added %}
-        <a href="{% url 'remove_from_favorite' product.id %}" class="btn btn-secondary btn-lg">Remove from Favorites</a>
-         {% else %}
-        <a href="{% url 'add_to_favorite' product.id %}" class="btn btn-outline-secondary btn-lg">Add to Favorites</a>
-            
-        {% endif %}
-        
-        
+      <div class="detail-desc">{{ product.description }}</div>
+
+      <div class="detail-actions">
+
+        <!-- ADD TO CART (JS) -->
+        <button
+          class="btn-buy"
+          onclick="addToCart({{ product.id }},'{{ product.name|escapejs }}',{{ product.price }},'{{ product.product_image.url }}');showToastMsg('✅ Added to cart!')"
+        >
+          🛒 Add to Cart
+        </button>
+
+        <!-- FAVOURITES (Django) -->
         {% if user.is_authenticated %}
-         <a href="#" class="btn btn-outline-secondary btn-lg">Add To Cart</a>
-            
+          {% if is_added %}
+            <a href="{% url 'remove_from_favorite' product.id %}" class="btn-fav-remove">
+              ❤️ Remove Favourite
+            </a>
+          {% else %}
+            <a href="{% url 'add_to_favorite' product.id %}" class="btn-fav">
+              🤍 Add to Favourites
+            </a>
+          {% endif %}
+        {% else %}
+          <a href="{% url 'login' %}" class="btn-fav">
+            🔐 Login to Favourite
+          </a>
         {% endif %}
-            
 
-        </div
+      </div>
 
-  
+      <!-- LOGIN PROMPT -->
+      {% if not user.is_authenticated %}
+      <p style="margin-top:16px;font-size:12px;color:var(--muted);text-align:center">
+        <a href="{% url 'login' %}" style="color:var(--accent)">Login</a> to save favourites and track your orders
+      </p>
+      {% endif %}
+
     </div>
   </div>
 </div>
 
-{% endblock content %}
+<!-- FOOTER -->
+<div class="footer">
+  <div class="footer-logo">ShopNexa</div>
+  <p>© 2025 ShopNexa.in — India's Next-Gen Store. Built with Django + MySQL + ❤️</p>
+</div>
+
+{% endblock %}

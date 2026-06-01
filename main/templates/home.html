@@ -1,21 +1,96 @@
 {% extends 'index.html' %}
+
 {% block content %}
-<div class='container'>
-    <h3>Brand New Products</h3>
-    <div class="products" style="display: flex; gap: 20px; flex-wrap: wrap;">
-        {% for pro in products  %}
-           <div class="card" style="width: 18rem;">
-            <img src="{{ pro.product_image.url }}" class="card-img-top" alt="{{ pro.name }}">
-            <div class="card-body">
-                <h5 class="card-title">{{ pro.name }}</h5>
-                <p class="card-text">{{ pro.description }}</p>
-                <p class="card-text">${{ pro.price|floatformat:2 }}</p>
-                <a href="{% url 'view_product' pro.id %}" class="btn btn-primary">View Product</a>
-            </div>
-            </div>
-        {% endfor %}
+
+<!-- HERO SECTION -->
+<div class="hero">
+  <div class="hero-tag">🚀 New Arrivals This Week</div>
+  <h1>Shop Everything at<br/><span>ShopNexa.in</span></h1>
+  <p>Fashion, Electronics, Fitness, Gaming & more — all under one roof. Fast delivery across India.</p>
+  <div class="hero-btns">
+    <a href="#products" class="btn-primary">Explore All Products</a>
+    <a href="{% url 'signup' %}" class="btn-ghost">Create Account 🎉</a>
+  </div>
+</div>
+
+<!-- STATS BAR -->
+<div class="stats">
+  <div class="stat"><div class="stat-num">10L+</div><div class="stat-label">Happy Customers</div></div>
+  <div class="stat"><div class="stat-num">50K+</div><div class="stat-label">Products</div></div>
+  <div class="stat"><div class="stat-num">100+</div><div class="stat-label">Brands</div></div>
+  <div class="stat"><div class="stat-num">24h</div><div class="stat-label">Fast Delivery</div></div>
+</div>
+
+<!-- CATEGORIES SECTION -->
+{% if categories %}
+<div class="section">
+  <div class="section-hd">
+    <h2>Shop by Category</h2>
+  </div>
+  <div class="cat-grid">
+    {% for cat in categories %}
+    <div class="cat-card">
+      <img class="cat-img" src="{{ cat.category_image.url }}" alt="{{ cat.name }}"/>
+      <p>{{ cat.name }}</p>
     </div>
-            
-    
-    </div
-{% endblock content %}
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+<!-- PRODUCTS SECTION -->
+<div class="section" id="products">
+  <div class="section-hd">
+    <h2>
+      {% if search_query %}
+        Results for "{{ search_query }}"
+      {% else %}
+        All Products
+      {% endif %}
+    </h2>
+    <span style="font-size:12px;color:var(--muted)">{{ products|length }} product{{ products|length|pluralize }}</span>
+  </div>
+
+  <div class="products-grid">
+    {% if products %}
+      {% for pro in products %}
+      <div class="prod-card" onclick="window.location='{% url 'view_product' pro.id %}'">
+        <div class="prod-img-wrap">
+          <img class="prod-img" src="{{ pro.product_image.url }}" alt="{{ pro.name }}" loading="lazy"/>
+        </div>
+        <div class="prod-body">
+          <div class="prod-cat-tag">{{ pro.category.name }}</div>
+          <div class="prod-name">{{ pro.name }}</div>
+          <div class="prod-price">₹{{ pro.price|floatformat:0 }}</div>
+          <div class="prod-delivery">✔ FREE delivery tomorrow</div>
+          <button
+            class="prod-add"
+            onclick="event.stopPropagation();addToCart({{ pro.id }},'{{ pro.name|escapejs }}',{{ pro.price }},'{{ pro.product_image.url }}')"
+          >+ Add to Cart</button>
+        </div>
+      </div>
+      {% endfor %}
+    {% else %}
+      <div class="empty-msg">
+        {% if search_query %}
+          😕 No products found for "{{ search_query }}"
+        {% else %}
+          😕 No products available yet. Check back soon!
+        {% endif %}
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <div class="footer-logo">ShopNexa</div>
+  <p>© 2025 ShopNexa.in — India's Next-Gen Store. Built with Django + MySQL + ❤️</p>
+  <div class="footer-links" style="margin-top:8px">
+    <a href="#">Privacy</a>
+    <a href="#">Terms</a>
+    <a href="#">Help</a>
+  </div>
+</div>
+
+{% endblock %}
